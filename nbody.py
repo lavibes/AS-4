@@ -16,7 +16,7 @@ from math import sqrt, pi as PI
 def combinations(l):
     result = []
     for x in range(len(l) - 1):
-        ls = l[x + 1 :]
+        ls = l[x + 1:]
         for y in ls:
             result.append((l[x][0], l[x][1], l[x][2], y[0], y[1], y[2]))
     return result
@@ -69,7 +69,8 @@ SYSTEM = tuple(BODIES.values())
 PAIRS = tuple(combinations(SYSTEM))
 
 
-def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
+def advance(dt, n, bodies=SYSTEM, pairs=PAIRS, write=False):
+    output_array = []
     for i in range(n):
         for ([x1, y1, z1], v1, m1, [x2, y2, z2], v2, m2) in pairs:
             dx = x1 - x2
@@ -85,11 +86,25 @@ def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
             v2[2] += dz * b1m
             v2[1] += dy * b1m
             v2[0] += dx * b1m
-        for (r, [vx, vy, vz], m) in bodies:
+        for name, values in BODIES.items():
+            (r, [vx, vy, vz], m) = values
             r[0] += dt * vx
             r[1] += dt * vy
             r[2] += dt * vz
+            if write:
+                output_array.append((name + ',' + format(r[0], '.4f') + ','+ format(r[1], '.4f') + ',' + format(r[2], '.4f')))
+    return output_array
 
+def write_to_csv(output):
+    # open the file in the write mode
+    f = open('python_output.csv', 'w')
+    # create the csv writer
+    # write a row to the csv file
+    f.write('body, x, y, z\n')
+    for row in output:
+        f.write(row + "\n")
+    # close the file
+    f.close()
 
 def report_energy(bodies=SYSTEM, pairs=PAIRS, e=0.0):
     for ((x1, y1, z1), v1, m1, (x2, y2, z2), v2, m2) in pairs:
@@ -112,20 +127,35 @@ def offset_momentum(ref, bodies=SYSTEM, px=0.0, py=0.0, pz=0.0):
     v[1] = py / m
     v[2] = pz / m
 
+def benchmark():
+    import time
+    start_time = time.time()
+    advance(0.01, 5*10**3)
+    print("5000 time: " + format(time.time() - start_time, '.4f'))
 
-def main(n, ref="sun"):
+    start_time = time.time()
+    advance(0.01, 5*10**5)
+    print("500000 time: " + format(time.time() - start_time, '.4f'))
+
+    # start_time = time.time()
+    # advance(0.01, 5*10**6)
+    # print("5000000 time: " + format(time.time() - start_time, '.4f'))
+    #
+    # start_time = time.time()
+    # advance(0.01, 5*10**7)
+    # print("50000000 time: " + format(time.time() - start_time, '.4f'))
+
+def main(ref="sun"):
+    n = 5*10**3
     offset_momentum(BODIES[ref])
     report_energy()
-    advance(0.01, n)
+    output = advance(0.01, n, write=True)
+    write_to_csv(output)
+
+    benchmark()
     report_energy()
+
 
 
 if __name__ == "__main__":
-    if len(sys.argv) >= 2:
-        main(int(sys.argv[1]))
-        sys.exit(0)
-    else:
-        print(f"This is {sys.argv[0]}")
-        print("Call this program with an integer as program argument")
-        print("(to set the number of iterations for the n-body simulation).")
-        sys.exit(1)
+    main()
