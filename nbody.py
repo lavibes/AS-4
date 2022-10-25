@@ -131,19 +131,19 @@ def offset_momentum(ref, bodies=SYSTEM, px=0.0, py=0.0, pz=0.0):
 def benchmark():
     import time
     start_time = time.time()
-    advance(0.01, 5*10**3)
+    advance(0.01, 5*10**3, False)
     print("5000 time: " + format(time.time() - start_time, '.4f'))
 
     # start_time = time.time()
-    # advance(0.01, 5*10**5)
+    # advance(0.01, 5*10**5, False)
     # print("500000 time: " + format(time.time() - start_time, '.4f'))
-
+    #
     # start_time = time.time()
-    # advance(0.01, 5*10**6)
+    # advance(0.01, 5*10**6, False)
     # print("5000000 time: " + format(time.time() - start_time, '.4f'))
     #
     # start_time = time.time()
-    # advance(0.01, 5*10**7)
+    # advance(0.01, 5*10**7, False)
     # print("50000000 time: " + format(time.time() - start_time, '.4f'))
 
 def main(ref="sun"):

@@ -16,8 +16,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <sstream>
 #include <fstream>
+#include <chrono>
+
 
 
 
@@ -280,6 +281,16 @@ int main(int argc, char **argv) {
         }
         myfile.close();
         std::cout << energy(state) << std::endl;
+
+        // benchmark time pretty quick
+        auto start_time =std::chrono::high_resolution_clock::now();
+
+        for (int i = 0; i < 50000000; ++i) {
+            advance(state, 0.01);
+        }
+        auto end_time =std::chrono::high_resolution_clock::now();
+        auto out = end_time - start_time;
+        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(out).count()<<std::endl;
         return EXIT_SUCCESS;
     }
 }
