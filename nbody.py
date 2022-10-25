@@ -92,7 +92,7 @@ def advance(dt, n, bodies=SYSTEM, pairs=PAIRS, write=False):
             r[1] += dt * vy
             r[2] += dt * vz
             if write:
-                output_array.append((name + ',' + format(r[0], '.4f') + ','+ format(r[1], '.4f') + ',' + format(r[2], '.4f')))
+                output_array.append((name + ';' + format(r[0], '.4f') + ';'+ format(r[1], '.4f') + ';' + format(r[2], '.4f')))
                 #print(output_array)
     return output_array
 
@@ -101,7 +101,7 @@ def write_to_csv(output):
     f = open('python_output.csv', 'w')
     # create the csv writer
     # write a row to the csv file
-    f.write('body, x, y, z\n')
+    f.write('body; x; y; z \n')
     for row in output:
         f.write(row + "\n")
     # close the file

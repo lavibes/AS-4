@@ -264,7 +264,7 @@ int main(int argc, char **argv) {
                 std::string sx = std::to_string(b.position.x);
                 std::string sy = std::to_string(b.position.y);
                 std::string sz = std::to_string(b.position.z);
-                name.append(','+ sx + ',' + sy  + ',' + sz);
+                name.append(';'+ sx + ';' + sy  + ';' + sz);
                 // prints: name + postion x , y and z
 //                std:: cout << name << std::endl;
                 // writes name to the array
@@ -274,7 +274,7 @@ int main(int argc, char **argv) {
         // write output_array to CSV file
         std::ofstream myfile;
         myfile.open ("Cpp_output.csv");
-        myfile << "name, x, y, z \n";
+        myfile << "name; x; y; z \n";
         for (unsigned int i = 0; i < size(output_array); i++ ){
             myfile << output_array[i]+'\n';
         }
