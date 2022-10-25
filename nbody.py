@@ -93,6 +93,7 @@ def advance(dt, n, bodies=SYSTEM, pairs=PAIRS, write=False):
             r[2] += dt * vz
             if write:
                 output_array.append((name + ',' + format(r[0], '.4f') + ','+ format(r[1], '.4f') + ',' + format(r[2], '.4f')))
+                #print(output_array)
     return output_array
 
 def write_to_csv(output):
@@ -133,9 +134,9 @@ def benchmark():
     advance(0.01, 5*10**3)
     print("5000 time: " + format(time.time() - start_time, '.4f'))
 
-    start_time = time.time()
-    advance(0.01, 5*10**5)
-    print("500000 time: " + format(time.time() - start_time, '.4f'))
+    # start_time = time.time()
+    # advance(0.01, 5*10**5)
+    # print("500000 time: " + format(time.time() - start_time, '.4f'))
 
     # start_time = time.time()
     # advance(0.01, 5*10**6)
@@ -146,12 +147,12 @@ def benchmark():
     # print("50000000 time: " + format(time.time() - start_time, '.4f'))
 
 def main(ref="sun"):
-    n = 5*10**3
+    n = 1
+    #n = 5*10**3
     offset_momentum(BODIES[ref])
     report_energy()
     output = advance(0.01, n, write=True)
     write_to_csv(output)
-
     benchmark()
     report_energy()
 

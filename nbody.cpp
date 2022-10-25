@@ -14,6 +14,11 @@
 #define _USE_MATH_DEFINES // https://docs.microsoft.com/en-us/cpp/c-runtime-library/math-constants?view=msvc-160
 #include <cmath>
 #include <iostream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <fstream>
+
 
 
 // these values are constant and not allowed to be changed
@@ -131,6 +136,7 @@ void advance(body state[BODIES_COUNT], double dt) {
     /*
      * Compute the new positions
      */
+
     for (unsigned int i = 0; i < BODIES_COUNT; ++i) {
         state[i].position += state[i].velocity * dt;
     }
@@ -249,9 +255,30 @@ int main(int argc, char **argv) {
         const unsigned int n = atoi(argv[1]);
         offset_momentum(state);
         std::cout << energy(state) << std::endl;
+        std::vector<std::string> output_array;
         for (int i = 0; i < n; ++i) {
             advance(state, 0.01);
+            for (unsigned int j = 0; j < BODIES_COUNT; j++) {
+                body b = state[j];
+                std::string name (b.name);
+                std::string sx = std::to_string(b.position.x);
+                std::string sy = std::to_string(b.position.y);
+                std::string sz = std::to_string(b.position.z);
+                name.append(','+ sx + ',' + sy  + ',' + sz);
+                // prints: name + postion x , y and z
+//                std:: cout << name << std::endl;
+                // writes name to the array
+                output_array.push_back(name);
+            }
         }
+        // write output_array to CSV file
+        std::ofstream myfile;
+        myfile.open ("Cpp_output.csv");
+        myfile << "name, x, y, z \n";
+        for (unsigned int i = 0; i < size(output_array); i++ ){
+            myfile << output_array[i]+'\n';
+        }
+        myfile.close();
         std::cout << energy(state) << std::endl;
         return EXIT_SUCCESS;
     }
