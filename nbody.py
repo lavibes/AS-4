@@ -9,6 +9,7 @@
 # modified by Andriy Misyura
 # slightly modified by bmmeijers
 
+
 import sys
 from math import sqrt, pi as PI
 
@@ -92,20 +93,22 @@ def advance(dt, n, bodies=SYSTEM, pairs=PAIRS, write=False):
             r[1] += dt * vy
             r[2] += dt * vz
             if write:
-                output_array.append((name + ';' + format(r[0], '.4f') + ';'+ format(r[1], '.4f') + ';' + format(r[2], '.4f')))
-                #print(output_array)
+                output_array.append((name + "," + format(r[0], ".4f") + "," + format(r[1], ".4f")
+                                     + "," + format(r[2], ".4f")))
     return output_array
 
+
 def write_to_csv(output):
-    # open the file in the write mode
-    f = open('python_output.csv', 'w')
+    #  open the file in the write mode
+    f = open("nbody_py.csv", "w")
     # create the csv writer
     # write a row to the csv file
-    f.write('body; x; y; z \n')
+    f.write("name of the body; position x; position y; position z \n")
     for row in output:
         f.write(row + "\n")
     # close the file
     f.close()
+
 
 def report_energy(bodies=SYSTEM, pairs=PAIRS, e=0.0):
     for ((x1, y1, z1), v1, m1, (x2, y2, z2), v2, m2) in pairs:
@@ -128,35 +131,21 @@ def offset_momentum(ref, bodies=SYSTEM, px=0.0, py=0.0, pz=0.0):
     v[1] = py / m
     v[2] = pz / m
 
-def benchmark():
-    import time
-    start_time = time.time()
-    advance(0.01, 5*10**3, False)
-    print("5000 time: " + format(time.time() - start_time, '.4f'))
 
-    # start_time = time.time()
-    # advance(0.01, 5*10**5, False)
-    # print("500000 time: " + format(time.time() - start_time, '.4f'))
-    #
-    # start_time = time.time()
-    # advance(0.01, 5*10**6, False)
-    # print("5000000 time: " + format(time.time() - start_time, '.4f'))
-    #
-    # start_time = time.time()
-    # advance(0.01, 5*10**7, False)
-    # print("50000000 time: " + format(time.time() - start_time, '.4f'))
-
-def main(ref="sun"):
-    n = 1
-    #n = 5*10**3
+def main(n, ref="sun"):
     offset_momentum(BODIES[ref])
     report_energy()
     output = advance(0.01, n, write=True)
     write_to_csv(output)
-    benchmark()
     report_energy()
 
 
-
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) >= 2:
+        main(int(sys.argv[1]))
+        sys.exit(0)
+    else:
+        print(f"This is {sys.argv[0]}")
+        print("Call this program with an integer as program argument")
+        print("(to set the number of iterations for the n-body simulation).")
+        sys.exit(1)
