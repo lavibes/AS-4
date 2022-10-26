@@ -17,7 +17,6 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <chrono>
 
 
 
@@ -266,31 +265,21 @@ int main(int argc, char **argv) {
                 std::string sy = std::to_string(b.position.y);
                 std::string sz = std::to_string(b.position.z);
                 name.append(';'+ sx + ';' + sy  + ';' + sz);
-                // prints: name + postion x , y and z
-//                std:: cout << name << std::endl;
                 // writes name to the array
                 output_array.push_back(name);
             }
         }
         // write output_array to CSV file
+
         std::ofstream myfile;
         myfile.open ("Cpp_output.csv");
-        myfile << "name; x; y; z \n";
+        myfile << "name of the body; position x; position y; position z \n";
         for (unsigned int i = 0; i < size(output_array); i++ ){
             myfile << output_array[i]+'\n';
         }
         myfile.close();
         std::cout << energy(state) << std::endl;
 
-        // benchmark time pretty quick
-        auto start_time =std::chrono::high_resolution_clock::now();
-
-        for (int i = 0; i < 50000000; ++i) {
-            advance(state, 0.01);
-        }
-        auto end_time =std::chrono::high_resolution_clock::now();
-        auto out = end_time - start_time;
-        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(out).count()<<std::endl;
         return EXIT_SUCCESS;
     }
 }
