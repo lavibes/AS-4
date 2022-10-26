@@ -15,7 +15,7 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
-
+#include <chrono>
 
 // these values are constant and not allowed to be changed
 const double SOLAR_MASS = 4 * M_PI * M_PI;
@@ -134,8 +134,6 @@ void advance(body state[BODIES_COUNT], double dt) {
      */
     for (unsigned int i = 0; i < BODIES_COUNT; ++i) {
         state[i].position += state[i].velocity * dt;
-//        // printing the name and positions fo the bodies per iteration.
-//        std::cout << state[i].name << state[i].position.x << state[i].position.y << state[i].position.z <<std::endl;
     }
 }
 
@@ -242,6 +240,9 @@ body state[] = {
 };
 
 int main(int argc, char **argv) {
+    // benchmark start time
+    auto start = std::chrono::high_resolution_clock::now();
+
     if (argc != 2) {
         std::cout << "This is " << argv[0] << std::endl;
         std::cout << "Call this program with an integer as program argument" << std::endl;
@@ -252,7 +253,7 @@ int main(int argc, char **argv) {
         // opening a new file and making header
         std::ofstream my_file;
         my_file.open("nbody_cpp.csv");
-        my_file << "name of the body" << ";" << "position x" << ";" << "position y" << ";" << "position z" << std::endl;
+        my_file << "name of the body" << "," << "position x" << "," << "position y" << "," << "position z" << std::endl;
 
         // calculating momentum and energy
         offset_momentum(state);
@@ -265,12 +266,17 @@ int main(int argc, char **argv) {
             // j loop for 5 bodies
             int j = 0;
             while(j < BODIES_COUNT) {
-                my_file << state[j].name << ";" << state[j].position.x << ";" << state[j].position.y
-                        << ";" << state[j].position.z << std::endl;
+                my_file << state[j].name << "," << state[j].position.x << "," << state[j].position.y
+                        << "," << state[j].position.z << std::endl;
                 ++j;
             }
         }
         std::cout << energy(state) << std::endl;
-        return EXIT_SUCCESS;
+
+        // benchmark end time
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop-start);
+
+        std::cout <<"time taken by the program: " << duration.count() << " seconds" << std::endl;
     }
 }
