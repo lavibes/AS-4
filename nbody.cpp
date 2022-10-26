@@ -14,8 +14,12 @@
 #define _USE_MATH_DEFINES // https://docs.microsoft.com/en-us/cpp/c-runtime-library/math-constants?view=msvc-160
 #include <cmath>
 #include <iostream>
+#include <string>
+#include <vector>
 #include <fstream>
-#include <chrono>
+
+
+
 
 // these values are constant and not allowed to be changed
 const double SOLAR_MASS = 4 * M_PI * M_PI;
@@ -132,6 +136,7 @@ void advance(body state[BODIES_COUNT], double dt) {
     /*
      * Compute the new positions
      */
+
     for (unsigned int i = 0; i < BODIES_COUNT; ++i) {
         state[i].position += state[i].velocity * dt;
     }
@@ -239,10 +244,8 @@ body state[] = {
         }
 };
 
-int main(int argc, char **argv) {
-    // benchmark start time
-    auto start = std::chrono::high_resolution_clock::now();
 
+int main(int argc, char **argv) {
     if (argc != 2) {
         std::cout << "This is " << argv[0] << std::endl;
         std::cout << "Call this program with an integer as program argument" << std::endl;
@@ -250,33 +253,32 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     } else {
         const unsigned int n = atoi(argv[1]);
-        // opening a new file and making header
-        std::ofstream my_file;
-        my_file.open("nbody_cpp.csv");
-        my_file << "name of the body" << "," << "position x" << "," << "position y" << "," << "position z" << std::endl;
-
-        // calculating momentum and energy
         offset_momentum(state);
         std::cout << energy(state) << std::endl;
-
-        //nested loop for calculating position of bodies and writing in the file.
-        // n = number of iterations
+        std::vector<std::string> output_array;
         for (int i = 0; i < n; ++i) {
             advance(state, 0.01);
-            // j loop for 5 bodies
-            int j = 0;
-            while(j < BODIES_COUNT) {
-                my_file << state[j].name << "," << state[j].position.x << "," << state[j].position.y
-                        << "," << state[j].position.z << std::endl;
-                ++j;
+            for (unsigned int j = 0; j < BODIES_COUNT; j++) {
+                body b = state[j];
+                std::string name (b.name);
+                std::string sx = std::to_string(b.position.x);
+                std::string sy = std::to_string(b.position.y);
+                std::string sz = std::to_string(b.position.z);
+                name.append(';'+ sx + ';' + sy  + ';' + sz);
+                // writes name to the array
+                output_array.push_back(name);
             }
         }
+        // write output_array to CSV file
+        std::ofstream myfile;
+        myfile.open ("Cpp_output.csv");
+        myfile << "name of the body; position x; position y; position z \n";
+        for (unsigned int i = 0; i < size(output_array); i++ ){
+            myfile << output_array[i]+'\n';
+        }
+        myfile.close();
         std::cout << energy(state) << std::endl;
 
-        // benchmark end time
-        auto stop = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop-start);
-
-        std::cout <<"time taken by the program: " << duration.count() << " seconds" << std::endl;
+        return EXIT_SUCCESS;
     }
 }
