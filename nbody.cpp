@@ -270,6 +270,7 @@ int main(int argc, char **argv) {
             }
         }
         // write output_array to CSV file
+
         std::ofstream myfile;
         myfile.open ("Cpp_output.csv");
         myfile << "name of the body; position x; position y; position z \n";
